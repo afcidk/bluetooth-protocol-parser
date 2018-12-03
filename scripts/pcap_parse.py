@@ -14,6 +14,8 @@ typedef struct pcaprec_hdr_s {
 '''
 from field_spec import header_field, data_field
 from field_spec import parse_field
+from field_spec import int_from_bits
+from sbc_codec  import extract_audio
 import os
 
 # temporary input for testing
@@ -64,7 +66,9 @@ try:
 except KeyboardInterrupt:
     pass
 
-#################Print parsed packets#####################################
+########Print parsed packets (Uncomment to print)##############
+extract_audio(packets)
+nn = 1
 
 for packet in packets:
     print(packet)
