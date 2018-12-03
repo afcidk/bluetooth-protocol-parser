@@ -1,11 +1,118 @@
 from event_contents import event_code, event_parameters
 from hci_ocf import cmd_code, cmd_parameters
 
-acl_data = {
+l2cap_data = {
     'Length': 16,
     'Channel_ID': 16,
-    'Payload': -1,
-    'ORDER': ['Length', 'Channel_ID', 'Payload']
+    'Choose': 'Channel_ID',
+    1: {
+        'Code': 8,
+        'Identifier': 8,
+        'Length': 16,
+        'Choose': 'Code',
+        2: {
+            'PSM': 16,
+            'Src_CID': 16,
+            'ORDER': [
+                'PSM',
+                'Src_CID',
+            ]
+        },
+        3: {
+            'Dst_CID': 16, # This two CIDs must be linked to their upper layer protocol by PSM of Code 0x02
+            'Src_CID': 16,  # This two CIDs must be linked to their upper layer protocol by PSM of Code 0x02
+            'Result': 16,
+            'Status': 16,
+            'ORDER': [
+                'Dst_CID',
+                'Src_CID',
+                'Result',
+                'Status',
+            ]
+        },
+        4: {
+            'Dst_CID': 16,
+            'Flags': 16,
+            'Config_Opt': 32,
+            'ORDER': [
+                'Dst_CID',
+                'Flags',
+                'Config_Opt',
+            ]
+        },
+        5: {
+            'Src_CID': 16,
+            'Flags': 16,
+            'Result': 16,
+            'Config': 16,
+            'ORDER': [
+                'Src_CID',
+                'Flags',
+                'Result',
+                'Config',
+            ]
+        },
+        6: {
+            'Dst_CID': 16,
+            'Src_CID': 16,
+            'ORDER': [
+                'Dst_CID',
+                'Src_CID'
+            ]
+        },
+        7: {
+            'Dst_CID': 16,
+            'Src_CID': 16,
+            'ORDER': [
+                'Dst_CID',
+                'Src_CID'
+            ]
+        },
+        10: {
+            'InfoType': 16,
+            'ORDER': ['InfoType']
+        },
+        11: {
+            'InfoType': 16,
+            'Result': 16,
+            'Data': -1,
+            'ORDER': [
+                'InfoType',
+                'Result',
+                'Data'
+            ]
+        },
+        'Name': {
+            2: 'Con_req',
+            3: 'Con_res',
+            4: 'Config_req',
+            5: 'Config_res',
+            6: 'Discon_req',
+            7: 'Discon_res',
+            10: 'Info_req',
+            11: 'Info_res'
+        },
+        'ORDER': [
+            'Code',
+            'Identifier',
+            'Length',
+            'Choose',
+        ]
+    },
+    2: {
+        'ORDER': []
+    },
+    -1: {
+        'Data': -10, # This part of data will be parsed later (after getting the upper protocol)
+        'ORDER': ['Data']
+        # -10 means reserved to parse later
+    },
+    'Name': {
+        1: 'Signaling Channel',
+        2: '0x0002',
+        -1    : 'Dynamic allocated' # TODO: change this to correct name later
+    },
+    'ORDER': ['Length', 'Channel_ID', 'Choose']
 }
 
 hci_command = {
@@ -21,7 +128,7 @@ hci_acl_data = {
     'PB_Flag': 2,
     'BC_Flag': 2,
     'Length': 16,
-    'acl_data': acl_data,
+    'acl_data': l2cap_data,
     'ORDER': ['Handle', 'PB_Flag', 'BC_Flag', 'Length', 'acl_data']
 }
 
@@ -93,7 +200,8 @@ avdtp_field = {
                         'Media_Type', 'Codec_Type', 'Data']
 
                 },
-                'ORDER': ['Service_Category', 'LOSC', 'Service']            },
+                'ORDER': ['Service_Category', 'LOSC', 'Service'] 
+            },
             'ORDER': ['ACP_RFA', 'ACP_SEID', 'INT_RFA',
                 'INT_SEID', 'Capabilities']
         },
@@ -114,7 +222,8 @@ avdtp_field = {
             7: 'Signal Start',
             9: 'Signal Suspend',
             -1: 'Undefined'
-        }
+        },
+        'ORDER': ['Signal_ID', 'RFA', 'Choose']
     },
     1: {
         'NOSP': 8,
@@ -143,7 +252,7 @@ avctp_field = {
     'Profile_ID': 16,
     'Other_Data': -1,
     'ORDER': ['IPID', 'C/R', 'Packet_type',
-        'Transaction', 'Profile_ID', 'Other_data']
+        'Transaction', 'Profile_ID', 'Other_Data']
 }
 
 obex_object_push_field = {
@@ -252,9 +361,8 @@ def parse_field(field, data, cur_channel_id=None):
             end8 = int(end/8)
             if 'Length' not in ret:
                 inner, _ = parse_field(field[choose], data[end8:], cur_channel_id)
-            else:
-                inner, _ = parse_field(field[choose], data[end8: end8+ret['Length']], cur_channel_id)
-            ret.update(inner)
+            else: inner, _ = parse_field(field[choose], data[end8: end8+ret['Length']], cur_channel_id)
+            ret.update({field['Name'][choose]: inner})
 
             ####### specific update for dynamic CID table #######
             if value == 'Code': # 2-side channel
@@ -316,7 +424,10 @@ def parse_field(field, data, cur_channel_id=None):
                     'Parameter': hci_ocf
                 })
                 continue
-            inner, _ = parse_field(value, data[end8: end8 + ret['Length']])
+            if 'Length' in ret:
+                inner, _ = parse_field(value, data[end8: end8 + ret['Length']], cur_channel_id)
+            else:
+                inner, _ = parse_field(value, data[end8:], cur_channel_id)
             ret.update({key: inner})
             continue
 

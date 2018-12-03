@@ -67,11 +67,12 @@ except KeyboardInterrupt:
     pass
 
 ########Print parsed packets (Uncomment to print)##############
-extract_audio(packets)
+#extract_audio(packets)
 nn = 1
 
 for packet in packets:
-    print(packet)
+    print('{} {}'.format(nn, packet))
+    nn += 1
     input()
 print()
 print('packet numbers: {}'.format(len(packets)))
