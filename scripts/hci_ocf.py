@@ -328,7 +328,7 @@ hci_link_ctrl_ocf_parameters = {
     },
     'HCI_User_Confirmation_Request_Negative_Reply': {
         'BD_ADDR': 6,
-        #'Status': 1,
+        #'Status': 1
         'ORDER': ['BD_ADDR']
     },
     'HCI_User_Passkey_Request_Reply': {
@@ -349,7 +349,7 @@ hci_link_ctrl_ocf_parameters = {
         'BD_ADDR': 6,
         'C': 16,
         'R': 16,
-        #'Status': 1,
+        #'Status': 1
         'ORDER': [
             'BD_ADDR',
             'C',
@@ -711,6 +711,7 @@ hci_link_policy_ocf_parameters = {
              'Role'
           ]
     },
+    
 }
 
 
@@ -720,7 +721,40 @@ hci_ctrller_baseband_ocf_code = {
     11: 'HCI_Write_PIN_Type',
     12: 'HCI_Create_New_Unit_Key',
     14: 'HCI_Read_Stored_Link_Key',
+    #17: 'HCI_Write_Stored_Link_Key',
+    18: 'HCI_Delete_Stored_Link_Key',
+    19: 'HCI_Write_Local_Name',
+    20: 'HCI_Read_Local_Name',
+    22: 'HCI_Write_Connection_Accept_Timeout',
+    24: 'HCI_Write_Page_Timeout',
     26: 'HCI_Write_Scan_Enable',
+    28: 'HCI_Write_Page_Scan_Activity',
+    30: 'HCI_Write_Inquiry_Scan_Activity',
+    32: 'HCI_Write_Authentication_Enable',
+    36: 'HCI_Write_Class_of_Device',
+    38: 'HCI_Write_Voice_Setting',
+    39: 'HCI_Read_Automatic_Flush_Timeout',
+    40: 'HCI_Write_Automatic_Flush_Timeout',
+    #41: 'HCI_Read_Num_Broadcast_Retransmissions',
+    42: 'HCI_Write_Num_Broadcast_Retransmissions',
+    44: 'HCI_Write_Hold_Mode_Activity',
+    45: 'HCI_Read_Transmit_Power_Level',
+    47: 'HCI_Write_Synchro-nous_Flow_Control_Enable',
+    49: 'HCI_Set_Controller_To_Host_Flow_Control',
+    51: 'HCI_Host_Buffer_Size',
+    #53: 'HCI_Host_Number_Of_Completed_Packets',
+    54: 'HCI_Read_Link_Supervision_Timeout',
+    55: 'HCI_Write_Link_Supervision_Timeout',
+    63: 'Set_AFH_Host_Channel_Classification',
+    67: 'HCI_Write_Inquiry_Scan_Type',
+    69: 'HCI_Write_Inquiry_Mode',
+    71: 'HCI_Write_Page_Scan_Type',
+    73: 'Write_AFH_Channel_Assessment_Mode',
+    82: 'HCI_Write_Extended_Inquiry_Response',
+    83: 'HCI_Refresh_Encryption_Key',
+    86: 'HCI_Write_Simple_Pairing_Mode',
+    89: 'HCI_Write_Inquiry_Transmit_Power_Level',
+    96: 'HCI_Send_Keypress_Notification',
     
 }
 
@@ -746,10 +780,182 @@ hci_ctrller_baseband_ocf_parameters = {
             'Read_All_Flag',
         ]
     },
+    'HCI_Write_Stored_Link_Key': {
+        'ORDER': []
+    },
+    'HCI_Delete_Stored_Link_Key': {
+        'BD_ADDR': 6,
+        'Delete_All_Flag': 1,
+        'ORDER': [
+            'BD_ADDR',
+            'Delete_All_Flag',
+        ]
+    },
+    'HCI_Write_Local_Name': {
+        'Local Name': 248,
+        'ORDER': ['Local Name']
+    },
+    'HCI_Read_Local_Name': {
+        'ORDER': []
+    },
+    'HCI_Write_Connection_Accept_Timeout': {
+        'Conn_Accept_Timeout': 2,
+        'ORDER': ['Conn_Accept_Timeout']
+    },
+    'HCI_Write_Page_Timeout': {
+        'Page_Timeout': 2,
+        'ORDER': ['Page_Timeout']
+    },
     'HCI_Write_Scan_Enable': {
         'Scan_Enable': 1,
         'ORDER': ['Scan_Enable']
     },
+    'HCI_Write_Page_Scan_Activity': {
+        'Page_Scan_Interval': 2,
+        'Page_Scan_Window': 2,
+        'ORDER': [
+            'Page_Scan_Interval',
+            'Page_Scan_Window',
+        ]
+    },
+    'HCI_Write_Inquiry_Scan_Activity': {
+        'Inquiry_Scan_Interval': 2,
+        'Inquiry_Scan_Window': 2,
+        'ORDER': [
+            'Inquiry_Scan_Interval',
+            'Inquiry_Scan_Window',
+        ]
+    },
+    'HCI_Write_Authentication_Enable': {
+        'Authentication_Enable': 1,
+        'ORDER': ['Authentication_Enable']
+    },
+    'HCI_Write_Class_of_Device': {
+        'Class_of_Device': 3,
+        'ORDER': ['Class_of_Device']
+    },
+    'HCI_Write_Voice_Setting': {
+        'Voice_Setting': 2,
+        'ORDER': ['Voice_Setting']
+    },
+    'HCI_Read_Automatic_Flush_Timeout': {
+        'Connection_Handle': 2,
+        'ORDER': ['Connection_Handle']
+    },
+    'HCI_Write_Automatic_Flush_Timeout': {
+        'Connection_Handle': 2,
+        'Flush_Timeout': 2,
+        'ORDER': [
+            'Connection_Handle',
+            'Flush_Timeout',
+        ]
+    },
+    'HCI_Read_Num_Broadcast_Retransmissions': {
+        'ORDER': []
+    },
+    'HCI_Write_Num_Broadcast_Retransmissions': {
+        'Num_Broadcast_Retransmissions' : 1,
+        'ORDER': ['Num_Broadcast_Retransmissions']
+    },
+    'HCI_Write_Hold_Mode_Activity': {
+        'Hold_Mode_Activity': 1,
+        'ORDER': ['Hold_Mode_Activity']
+    },
+    'HCI_Read_Transmit_Power_Level': {
+        'Connection_Handle': 2,
+        'Type': 1,
+        'ORDER': [
+            'Connection_Handle',
+            'Type',
+        ]
+    },
+    'HCI_Write_Synchro-nous_Flow_Control_Enable': {
+        'Synchronous_Flow_Control_Enable': 1,
+        'ORDER': ['Synchronous_Flow_Control_Enable']
+    },
+    'HCI_Set_Controller_To_Host_Flow_Control': {
+        'Flow_Control_Enable': 1,
+        'ORDER': ['Flow_Control_Enable']
+    },
+    'HCI_Host_Buffer_Size': {
+        'Host_ACL_Data_Packet_Length': 2,
+        'Host_Synchronous_Data_Packet_Length': 1,
+        'Host_Total_Num_ACL_Data_Packets': 2,
+        'Host_Total_Num_Synchronous_Data_Packets': 2,
+        'ORDER': [
+            'Host_ACL_Data_Packet_Length',
+            'Host_Synchronous_Data_Packet_Length',
+            'Host_Total_Num_ACL_Data_Packets',
+            'Host_Total_Num_Synchronous_Data_Packets'
+        ]
+    },
+    'HCI_Host_Number_Of_Completed_Packets': {
+        'Number_Of_Handles': 1, 
+        #'Connection_Handle[i]': Number_Of_Handles*2,
+        #'Host_Num_Of_Completed_Packets [i]': Number_Of_Handles*2
+        'ORDER': ['Number_Of_Handles']
+    },
+    'HCI_Read_Link_Supervision_Timeout': {
+        'Handle': 2,
+        'ORDER': ['Handle']
+    },
+    'HCI_Write_Link_Supervision_Timeout': {
+        'Handle': 2,
+        'Link_Supervision_Timeout': 2,
+        'ORDER': [
+            'Handle',
+            'Link_Supervision_Timeout',
+        ]
+    },
+    'Set_AFH_Host_Channel_Classification': {
+        'AFH_Host_Channel_Classification': 10,
+        'ORDER': ['AFH_Host_Channel_Classification']
+    },
+    'HCI_Write_Inquiry_Scan_Type': {
+        'Scan_Type': 1,
+        'ORDER': ['Scan_Type']
+    },
+    'HCI_Write_Inquiry_Mode': {
+        'Inquiry_Mode': 1,
+        'ORDER': ['Inquiry_Mode']
+    },
+    'HCI_Write_Page_Scan_Type': {
+        'Page_Scan_Type': 1,
+        'ORDER': ['Page_Scan_Type']
+    },
+    'Write_AFH_Channel_Assessment_Mode': {
+        'AFH_Channel_Assessment_Mode': 1,
+        'ORDER': ['AFH_Channel_Assessment_Mode']
+    },
+    'HCI_Write_Extended_Inquiry_Response': {
+        'FEC_Required': 1, 
+        'Extended_Inquiry_Response': 240,
+        'ORDER': [
+            'FEC_Required',
+            'Extended_Inquiry_Response',
+        ]
+    },
+    'HCI_Refresh_Encryption_Key': {
+        'Connection_Handle': 2,
+        'ORDER': ['Connection_Handle']
+    },
+    'HCI_Write_Simple_Pairing_Mode': {
+        'Simple_Pairing_Mode': 1,
+        'ORDER': ['Simple_Pairing_Mode']
+    },
+    'HCI_Write_Inquiry_Transmit_Power_Level': {
+        'TX_Power': 1,
+        'ORDER': ['TX_Power']
+    },
+    'HCI_Send_Keypress_Notification': {
+        'BD_ADDR': 6, 
+        'Notification_Type': 1,
+        'ORDER': [
+            'BD_ADDR',
+            'Notification_Type',
+        ]
+    },
+            
 }
 
 
@@ -757,6 +963,7 @@ hci_ctrller_baseband_ocf_parameters = {
 hci_info_ocf_code = {
     1: 'HCI_Read_Local_Version_Information',
     2: 'HCI_Read_Local_Supported_Commands',
+    
 }
 
 hci_info_ocf_parameters = {
@@ -766,14 +973,15 @@ hci_info_ocf_parameters = {
         #'HCI Revision': 2,
         #'LMP Version': 1,
         #'Manufacturer_Name': 2,
-        #'LMP Subversion': 2
+        #'LMP Subversion': 2,
         'ORDER': []
     },
     'HCI_Read_Local_Supported_Commands': {
         #'Status': 1,
-        #'Supported_Commands': 64
+        #'Supported_Commands': 64,
         'ORDER': []
     },
+    
 }
 
 
@@ -787,37 +995,38 @@ hci_status_ocf_code = {
     7: 'HCI_Read_Clock',
     8: 'HCI_Read_Encryption_Key_Size',
     9: 'HCI_Read_Local_AMP_Info',
+    
 }
 
 hci_status_ocf_parameters = {
     'HCI_Read_Failed_Contact_Counter': {
         'Handle': 2,
         #'Status': 1,
-        #'Failed_Contact_Counter': 2
+        #'Failed_Contact_Counter': 2,
         'ORDER': ['Handle']
     },
     'HCI_Reset_Failed_Contact_Counter': {
         'Handle': 2,
-        #'Status': 1
+        #'Status': 1,
         'ORDER': ['Handle']
     },
     'HCI_Read_Link_Quality': {
         'Handle': 2,
         #'Status': 1,
-        #'Link_Quality': 1
+        #'Link_Quality': 1,
         'ORDER': ['Handle']
     },
     'HCI_Read_RSSI': {
         'Handle': 2,
         #'Status': 1,
-        #'RSSI': 1
+        #'RSSI': 1,
         'ORDER': ['Handle']
     },
     'HCI_Read_AFH_Channel_Map': {
         'Connection_Handle': 2,
         #'Status': 1,
         #'AFH_Mode': 1,
-        #'AFH_Channel_Map': 10
+        #'AFH_Channel_Map': 10,
         'ORDER': ['Connection_Handle']
     },
     'HCI_Read_Clock': {
@@ -825,7 +1034,7 @@ hci_status_ocf_parameters = {
         'Which_Clock': 1,
         #'Status': 1,
         #'Clock': 4,
-        #'Accuracy':2
+        #'Accuracy':2,
         'ORDER': [
             'Connection_Handle',
             'Which_Clock',
@@ -834,7 +1043,7 @@ hci_status_ocf_parameters = {
     'HCI_Read_Encryption_Key_Size': {
         'Connection_Handle': 2,
         #'Status': 1,
-        #'Key_Size': 1
+        #'Key_Size': 1,
         'ORDER': ['Connection_Handle']
     },
     'HCI_Read_Local_AMP_Info': {
@@ -848,8 +1057,8 @@ hci_status_ocf_parameters = {
         #'PAL_Capabilities': 2,
         #'Max_AMP_ASSOC_Length': 2,
         #'Max_Flush_Timeout': 4,
-        #'Best_Effort_Flush_Timeout': 4
-        'ORDER': []
+        #'Best_Effort_Flush_Timeout': 4,
+        'ORDER': ['']
     },
             
 }
@@ -858,14 +1067,14 @@ hci_status_ocf_parameters = {
 # when OGF = 6
 hci_test_ocf_code = {
     1: 'HCI_Read_Loopback_Mode',
+    
 }
 
 hci_test_ocf_parameters = {
     'HCI_Read_Loopback_Mode': {
         #'Status': 1,
-        #'Loopback_Mode': 1
+        #'Loopback_Mode': 1,
+        'ORDER': ['']
     },
-    'ORDER': [
-        'HCI_Read_Loopback_Mode'
-    ]
+            
 }
