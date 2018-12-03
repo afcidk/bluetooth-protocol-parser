@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 '''
-modified from btstack
+modified from btstack/test/sbc/
 '''
 import numpy as np
 import wave
@@ -37,7 +37,7 @@ def find_syncword(h2_first_byte, h2_second_byte):
 def sbc_unpack_frame(fin, available_bytes, frame):
     global H2_first_byte, H2_second_byte
     if available_bytes == 0:
-        print ("no available_bytes")
+      #  print ("no available_bytes")
         raise TypeError
 
     frame.syncword = get_bits(fin,8)
@@ -306,17 +306,13 @@ def sbc2wav():
         mSBC_enabled = 0
         infile = '../data/output.sbc'
         wavfile = infile.replace('.sbc', '-decoded-py.wav')
-        
-        print ("input file: ", infile)
+       # print ("input file: ", infile)
         print ("output file: ", wavfile)
-        print ("mSBC enabled: ", mSBC_enabled)
 
         fout = False
 
         implementation = "SIG"
-
-        print ("\nSynthesis implementation: %s\n" % implementation)
-
+        
         with open (infile, 'rb') as fin:
             try:
                 fin.seek(0, 2)
@@ -326,8 +322,8 @@ def sbc2wav():
                 frame_count = 0
                 while True:
                     frame = SBCFrame()
-                    if frame_count % 200 == 0:
-                        print ("== Frame %d == offset %d" % (frame_count, fin.tell()))
+                #    if frame_count % 200 == 0:
+                #       print ("== Frame %d == offset %d" % (frame_count, fin.tell()))
 
 
                     err = sbc_unpack_frame(fin, file_size - fin.tell(), frame)
@@ -337,8 +333,7 @@ def sbc2wav():
 
                     if frame_count == 0:
                         sbc_init_sythesis(frame.nr_subbands, implementation)
-                        print (frame)  
-                        print ("frame done")                  
+                                 
 
                     sbc_decode(frame, implementation)
                         
@@ -349,13 +344,10 @@ def sbc2wav():
                         fout.setframerate(sampling_frequencies[frame.sampling_frequency])
                         fout.setnframes(0)
                         fout.setcomptype = 'NONE'
-                        
-                        print (frame.pcm)
 
 
                     write_wav_file(fout, frame)
                     frame_count += 1
-                    
 
             except TypeError as err:
                 if not fout:
@@ -364,7 +356,7 @@ def sbc2wav():
                     fout.close()
                     if frame_count > 0:
                         print ("DONE, SBC file %s decoded into WAV file %s " % (infile, wavfile))
-                        print ("Average sythesis time per frame: %d ms/frame" % (total_time_ms/frame_count))
+                       # print ("Average sythesis time per frame: %d ms/frame" % (total_time_ms/frame_count))
                     else:
                         print(err)
                         print ("No frame found")
@@ -372,7 +364,7 @@ def sbc2wav():
         fout.close()
         if frame_count > 0:
             print ("DONE: SBC file %s decoded into WAV file %s " % (infile, wavfile))
-            print ("Average sythesis time per frame: %d ms/frame" % (total_time_ms/frame_count))
+           # print ("Average sythesis time per frame: %d ms/frame" % (total_time_ms/frame_count))
         else:
             print ("No frame found")
         
