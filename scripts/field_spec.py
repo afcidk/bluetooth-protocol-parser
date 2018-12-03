@@ -1,80 +1,19 @@
 from event_contents import event_code, event_parameters
+from hci_ocf import cmd_code, cmd_parameters
 
-l2cap_data = {
+acl_data = {
     'Length': 16,
     'Channel_ID': 16,
-    'Choose': 'Channel_ID',
-    0x0001: {
-        'Code': 8,
-        'Identifier': 8,
-        'Length': 16,
-        'Choose': 'Code',
-        2: {
-            'PSM': 16,
-            'Src_CID': 16
-        },
-        3: {
-            'Dst_CID': 16, # This two CIDs must be linked to their upper layer protocol by PSM of Code 0x02 
-            'Src_CID': 16,  # This two CIDs must be linked to their upper layer protocol by PSM of Code 0x02
-            'Result': 16,
-            'Status': 16
-        },
-        4: {
-            'Dst_CID': 16, 
-            'Flags': 16,
-            'Config_Opt': 32
-        },
-        5: {
-            'Src_CID': 16,
-            'Flags': 16,
-            'Result': 16,
-            'Config': 16,
-        },
-        6: {
-            'Dst_CID': 16,
-            'Src_CID': 16
-        },
-        7: {
-            'Dst_CID': 16,
-            'Src_CID': 16
-        },
-        10: {
-            'InfoType': 16
-        },
-        11: {
-            'InfoType': 16,
-            'Result': 16,
-            'Data': -1
-        },
-        'Name': {
-            2: 'Con_req',
-            3: 'Con_res',
-            4: 'Config_req',
-            5: 'Config_res',
-            6: 'Discon_req',
-            7: 'Discon_res',
-            10: 'Info_req',
-            11: 'Info_res'
-        }
-    },
-    0x0002: {
-        '2': '2',
-    },
-    -1: {
-        'Data': -10, # This part of data will be parsed later (after getting the upper protocol)
-        # -10 means reserved to parse later
-    },
-    'Name': {
-        0x0001: 'Signaling Channel',
-        0x0002: '0x0002',
-        -1    : 'Dynamic allocated' # TODO: change this to correct name later
-    }
+    'Payload': -1,
+    'ORDER': ['Length', 'Channel_ID', 'Payload']
 }
 
 hci_command = {
     'OCF': 10,
     'OGF': 6,
-    'Length': 8
+    'Length': 8,
+    'Parameter': cmd_parameters(1),
+    'ORDER': ['OCF', 'OGF', 'Length', 'Parameter']
 }
 
 hci_acl_data = {
@@ -82,20 +21,23 @@ hci_acl_data = {
     'PB_Flag': 2,
     'BC_Flag': 2,
     'Length': 16,
-    'acl_data': l2cap_data
+    'acl_data': acl_data,
+    'ORDER': ['Handle', 'PB_Flag', 'BC_Flag', 'Length', 'acl_data']
 }
 
 hci_sync_data = {
     'Handle': 12,
     'Packet_Status': 2,
     'RFU': 2,
-    'Length': 8
+    'Length': 8,
+    'ORDER': ['Handle', 'Packet_Status', 'RFU', 'Length']
 }
 
 hci_event = {
     'Event': 8,
     'Length': 8,
-    'Parameter': event_parameters  # all event_parameter are in event_contents.py
+    'Parameter': event_parameters,  # all event_parameter are in event_contents.py
+    'ORDER': ['Event', 'Length', 'Parameter']
 }
 
 header_field = {
@@ -104,7 +46,8 @@ header_field = {
     'incl_len': 32,
     'orig_len': 32,
     None: 32,
-    'packet_type': 8
+    'packet_type': 8,
+    'ORDER': ['ts_sec', 'ts_usec', 'incl_len', 'orig_len', None, 'packet_type']
 }
 
 data_field = {
@@ -118,7 +61,8 @@ sdp_field = {
     'PDU': 8,
     'Transaction_ID': 16,
     'Length': 16,
-    'Parameters': -1
+    'Parameters': -1,
+    'ORDER': ['PDU', 'Transaction_ID', 'Length', 'Parameters']
 }
 
 avdtp_field = { 
@@ -144,18 +88,26 @@ avdtp_field = {
                     'RFA': 4,
                     'Media_Type': 4,
                     'Codec_Type': 8,
-                    'Data': -1
-                }
-            }
+                    'Data': -1,
+                    'ORDER': ['Category', 'LOSC', 'RFA',
+                        'Media_Type', 'Codec_Type', 'Data']
+
+                },
+                'ORDER': ['Service_Category', 'LOSC', 'Service']            },
+            'ORDER': ['ACP_RFA', 'ACP_SEID', 'INT_RFA',
+                'INT_SEID', 'Capabilities']
         },
         7: {
-            'Signal_Start': -1
+            'Signal_Start': -1,
+            'ORDER': ['Signal_Start']
         },
         9: {
-            'Signal_Suspend': -1
+            'Signal_Suspend': -1,
+            'ORDER': ['Signal_Suspend']
         },
         -1: {
-            'Data': -1
+            'Data': -1,
+            'ORDER': ['Data']
         },
         'Name': {
             3: 'SetConfiguration',
@@ -168,6 +120,7 @@ avdtp_field = {
         'NOSP': 8,
         'Signal_ID': 6,
         'RFA': 2,
+        'ORDER': ['NOSP', 'Signal_ID', 'RFA']
     },
     2: {
     },
@@ -178,7 +131,8 @@ avdtp_field = {
         1: 'Start_Packet',
         2: 'Continue_Packet',
         3: 'End_Packet'
-    }
+    },
+    'ORDER': ['Msg_type', 'Packet_type', 'Transaction', 'Choose']
 }
 
 avctp_field = {
@@ -187,13 +141,56 @@ avctp_field = {
     'Packet_type': 2,
     'Transaction': 4,
     'Profile_ID': 16,
-    'Other_Data': -1
+    'Other_Data': -1,
+    'ORDER': ['IPID', 'C/R', 'Packet_type',
+        'Transaction', 'Profile_ID', 'Other_data']
+}
+
+obex_object_push_field = {
+    'ReqSeq': 6,
+    'Seg_and_reassembly': 2,
+    'Frame_type': 1,
+    'TxSeq': 6,
+    'R': 1,
+    'OBEX': {
+        'Opcode': 7,
+        'Final_Flag': 1,
+        'Length': 16,
+        'Choose': 'Opcode',
+        0: {
+            'Version': 8,
+            'Flags': 8,
+            'Max_Length': 16,
+            'Headers': {
+                'Meaning': 6,
+                'Encoding': 2,
+                'Count': 32,
+                'Count_BIG_ENDIAN': True,
+                'ORDER': ['Meaning', 'Encoding', 'Count']
+            },
+            'Max_Length_BIG_ENDIAN': True,
+            'ORDER': ['Version', 'Flags', 'Max_Length', 'Headers']
+        },
+        -1: {
+            'Data': -1,
+            'ORDER': ['Data']
+        },
+        'Name': {
+            0: 'Connect',
+            -1: 'Others'
+        },
+        'Length_BIG_ENDIAN': True,
+        'ORDER':  ['Opcode', 'Final_Flag', 'Length', 'Choose']
+    },
+    'FCS': 16,
+    'ORDER': ['ReqSeq', 'Seg_and_reassembly', 'Frame_type', 'TxSeq', 'R', 'OBEX', 'FCS']
 }
 
 psm_field = {
     1: sdp_field,
     23: avctp_field,
     25: avdtp_field,
+    4105: obex_object_push_field
 }
 
 a2dp_field = {
@@ -205,15 +202,19 @@ a2dp_field = {
         'Payload_Type': 8,
         'Seq': 16,
         'Timestamp': 32,
-        'Sync SID': 32,
+        'Sync_SID': 32,
         'SBC_Codec': {
             'Frame_numbers': 4,
             'RFA': 1,
             'Last_Packet': 1,
             'Starting_Packet': 1,
             'Fragmented': 1,
-            'Frames': -1
-        }
+            'Frames': -1,
+            'ORDER': ['Frame_numbers', 'RFA', 'Last_Packet',
+                'Starting_Packet', 'Fragmented', 'Frames']
+        },
+        'ORDER': ['SID_count', 'Extension', 'Padding', 'Version',
+            'Payload_Type', 'Seq', 'Timestamp', 'Sync_SID', 'SBC_Codec']
     }
 }
 
@@ -222,7 +223,7 @@ dynamic_CID_table_name = {
     1: 'SDP',
     23: 'AVCTP',
     25: 'AVDTP',
-    4105: 'no!'
+    4105: 'OBEX Object Push'
 }
 
 data_start_status = False
@@ -231,10 +232,12 @@ def parse_field(field, data, cur_channel_id=None):
     global data_start_status
     global data_service_type
     hci_type = check_push_value_count = 0
+    check_cmd_count = 0
     ret = dict()
     end = 0
-    for key, value in field.items():
-        if key is None:
+    for key in field['ORDER']:
+        value = field[key]
+        if key is None or key is 'ORDER':
             pass
         elif key == 'Signal_Start':
             data_start_status = True
@@ -275,6 +278,8 @@ def parse_field(field, data, cur_channel_id=None):
                 if data_start_status == True and len(data[end8:]) > 10: # parse A2DP data
                     inner, _ = parse_field(a2dp_field[data_service_type], data[end8:], cur_channel_id)
                 else: # parse PSM field data
+                    if op_name not in psm_field: # Dynamic PSM
+                        op_name = -1
                     inner, _ = parse_field(psm_field[op_name], data[end8:], cur_channel_id)
                 ret.update({dynamic_CID_table_name[op_name]:inner})
             elif value < 0:
@@ -282,9 +287,16 @@ def parse_field(field, data, cur_channel_id=None):
                 ret.update({
                     key: data[end8:] if value > -2 else int.from_bytes(data[end8:], 'little')
                 })
-            else:  # normal usage
+            else:
                 tmp_hci_type = hci_type
-                hci_type, typeValue = typeCode_to_typeValue(key, int_from_bits(data, end, end + value))
+
+                if key+'_BIG_ENDIAN' in field.keys():
+                    endian = 'big'
+                else: endian = 'little'
+                hci_type, typeValue = typeCode_to_typeValue(key, int_from_bits(data, end, end + value, endian))
+
+                if(key == 'OGF'):
+                    hci_command['Parameter'] = cmd_parameters(typeValue)
                 hci_type = hci_type if tmp_hci_type == 0 else tmp_hci_type  # if hci_type is changed, then restoring hci_type by tmp_value
                 check_push_value_count += 1
                 ret.update({
@@ -296,9 +308,15 @@ def parse_field(field, data, cur_channel_id=None):
         elif type(value) is dict:  
             end8 = int(end/8)
             value = value[ret['Event']] if 'Event' in ret else value
-            if 'Length' not in ret:
-                inner, _ = parse_field(value, data[end8:], cur_channel_id)
-            else: inner, _ = parse_field(value, data[end8: end8+ret['Length']], cur_channel_id)
+            if('OCF' in ret and check_cmd_count == 0):
+                check_cmd_count = 1
+                value = value[cmd_code(ret['OGF'])[ret['OCF']]] if 'OCF' in ret else value
+                hci_ocf, vlue_ocf = update_cmd(value, data, end)
+                ret.update({
+                    'Parameter': hci_ocf
+                })
+                continue
+            inner, _ = parse_field(value, data[end8: end8 + ret['Length']])
             ret.update({key: inner})
             continue
 
@@ -306,13 +324,21 @@ def parse_field(field, data, cur_channel_id=None):
 
         end += value
 
-    data = data[int(end/8):]
+    data = data[int(end / 8):]
 
     return ret, data
 
-def int_from_bits(data, start, end):
+
+def int_from_bits(data, start, end, endian='little'):
    num = int.from_bytes(data, 'little') 
-   return (num>>start) & ((1<<(end-start))-1)
+   ret = (num>>start) & ((1<<(end-start))-1)
+   if endian == 'big':
+       return int.from_bytes(
+               ret.to_bytes(int((ret.bit_length()+7)/8), 'big'),
+               'little'
+               )
+
+   return ret
 
 # on Case 4(event), Event code converts to Event name by its code.
 # e.g, Event code : 14H (20d) > Event name: Mode Change
@@ -333,7 +359,6 @@ def typeCode_to_typeValue(key, pure_int):
     else:
         return 0, pure_int
 
-
 def update_right_value_in_dict(data_dict):
     # get first key and value to update last parameter
     first_parmtr = [list(data_dict.keys())[0], list(data_dict.values())[0]]
@@ -342,3 +367,23 @@ def update_right_value_in_dict(data_dict):
         # -1 and -2 belong to special case, -3 and -4 belong to reserved field
         if type(value) is int and value < -4:
             value = value * -1 * first_parmtr[1]  # index 1 is first value in dict
+            
+def update_cmd(data_dict, data, end):
+    ret = dict()
+    for key in data_dict['ORDER']:
+        if key == 'ORDER': continue
+
+        value = data_dict[key]
+        if(type(value) is int and value > 0):
+            if(key == 'BD_ADDR' or key == 'Link_Key'):
+                ret.update({
+                    key: int_from_bits(data, end, end + value*8).to_bytes(value, 'little').hex()
+                })
+            else:
+                ret.update({
+                    key: int_from_bits(data, end, end + value*8)
+                })
+            #print(hex(int_from_bits(data, end, end + 8)))
+        end += value*8
+    data = data[int(end / 8):]
+    return ret, data
