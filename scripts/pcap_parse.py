@@ -67,7 +67,7 @@ except KeyboardInterrupt:
     pass
 
 ########Print parsed packets (Uncomment to print)##############
-#extract_audio(packets)
+extract_audio(packets)
 nn = 1
 
 for packet in packets:
